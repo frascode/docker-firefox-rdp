@@ -10,7 +10,7 @@ ENV SCALE="1"
 
 RUN	apt-get update
 RUN	apt-get install -y fonts-takao pulseaudio supervisor x11vnc fluxbox mc xfce4 xrdp xvfb wget nano grep sudo
-RUN	apt-get install awesome awesome-extra
+RUN	apt-get install awesome awesome-extra -y
 RUN	apt install software-properties-common -y
 RUN add-apt-repository ppa:mozillateam/ppa -y
 RUN echo "Package: * Pin: release o=LP-PPA-mozillateam Pin-Priority: 1001" > /etc/apt/preferences.d/mozilla-firefox
