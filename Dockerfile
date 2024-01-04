@@ -36,27 +36,38 @@ RUN	echo ' \n\
 		' >> /home/user/.fluxbox/init
 
 RUN	echo ' \n\
-		[startup] {bash /home/user/.fluxbox/run_on_start >> /home/user/.fluxbox/logs 2&>1}\n\
+#		[startup] {bash /home/user/.fluxbox/run_on_start >> /home/user/.fluxbox/logs 2&>1}\n\
 		[app] (class=firefox)\n\
 			[Maximized] {yes}\n\
 		[end]\n\
 		' > /home/user/.fluxbox/apps
 
-RUN	echo ' \n\
-		export PROFILE=(/home/user/.mozilla/firefox/*.default-release)\n\
-		echo $PROFILE >> /home/user/.fluxbox/logs\n\
-		echo "${PROFILE[0]}"/user.js >> /home/user/.fluxbox/logs\n\
-		echo $SCALE >> /home/user/.fluxbox/logs\n\
-		echo "user_pref(\"layout.css.devPixelsPerPx\", "$SCALE");" > "${PROFILE[0]}"/user.js\n\
-		firefox --kiosk $URL &\n\
-		' > /home/user/.fluxbox/run_on_start
+#RUN	echo '#!/bin/bash \n\
+#export PROFILE=(/home/user/.mozilla/firefox/*.default-release)\n\
+#echo $PROFILE >> /home/user/.fluxbox/logs\n\
+#echo "${PROFILE[0]}"/user.js >> /home/user/.fluxbox/logs\n\
+#echo $SCALE >> /home/user/.fluxbox/logs\n\
+#echo "user_pref(\"layout.css.devPixelsPerPx\", "$SCALE");" > "${PROFILE[0]}"/user.js\n\
+#firefox --kiosk $URL &\n\
+#		' > /home/user/.fluxbox/run_on_start
+
+RUN	echo '#!/bin/bash \n\
+export PROFILE=(/home/user/.mozilla/firefox/*.default-release)\n\
+echo $PROFILE >> /home/user/.fluxbox/logs\n\
+echo "${PROFILE[0]}"/user.js >> /home/user/.fluxbox/logs\n\
+echo $SCALE >> /home/user/.fluxbox/logs\n\
+echo "user_pref(\"layout.css.devPixelsPerPx\", "$SCALE");" > "${PROFILE[0]}"/user.js\n\
+fluxbox &\n\
+fbpid=$!\n\
+sleep 5\n\
+firefox --kiosk $URL &\n\
+wait $fbpid\n\
+\n\
+		' > /home/user/.fluxbox/startup
+
 
 RUN	chown -R user:user /home/user/.config /home/user/.fluxbox
-
 ADD conf/ /
-
-VOLUME ["/home/user"]
-
 ENTRYPOINT ["/bin/bash", "/entrypoint.sh"]
 
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
