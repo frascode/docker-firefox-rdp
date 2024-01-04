@@ -27,7 +27,7 @@ RUN	mkdir -p /home/user/.config/awesome/
 RUN	cp /etc/xdg/awesome/rc.lua /home/user/.config/awesome/rc.lua
 
 RUN	echo '\n\
-firefox --kiosk $URL &\n\
+awful.util.spawn("firefox --kiosk $URL")\n\
 \n\
 		' > /home/user/.config/awesome/rc.lua
 
