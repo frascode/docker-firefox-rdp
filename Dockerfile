@@ -5,6 +5,7 @@ ENV DEBIAN_FRONTEND="noninteractive"
 ENV LC_ALL="C.UTF-8"
 ENV LANG="en_US.UTF-8"
 ENV LANGUAGE="en_US.UTF-8"
+ENV RESOLUTION="1366x768"
 
 RUN	apt-get update
 RUN	apt-get install -y fonts-takao pulseaudio supervisor x11vnc fluxbox mc xfce4 xrdp xvfb wget
