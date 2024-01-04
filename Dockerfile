@@ -6,6 +6,7 @@ ENV LC_ALL="C.UTF-8"
 ENV LANG="en_US.UTF-8"
 ENV LANGUAGE="en_US.UTF-8"
 ENV RESOLUTION="1366x768x24"
+ENV SCALE="1"
 
 RUN	apt-get update
 RUN	apt-get install -y fonts-takao pulseaudio supervisor x11vnc fluxbox mc xfce4 xrdp xvfb wget nano grep sudo
@@ -35,11 +36,17 @@ RUN	echo ' \n\
 		' >> /home/user/.fluxbox/init
 
 RUN	echo ' \n\
-		[startup] {firefox --kiosk $URL}\n\
+		[startup] {bash /home/user/.fluxbox/run_on_start}\n\
 		[app] (class=firefox)\n\
 			[Maximized] {yes}\n\
 		[end]\n\
 		' > /home/user/.fluxbox/apps
+
+RUN	echo ' \n\
+		export PROFILE=(/home/user/.mozilla/firefox/*.default-release)\n\
+		echo "user_pref(\"layout.css.devPixelsPerPx\", "$SCALE");" > "${PROFILE[0]}"/user.js\n\
+		firefox --kiosk $URL\n\
+		' > /home/user/.fluxbox/run_on_start
 
 RUN	chown -R user:user /home/user/.config /home/user/.fluxbox
 
