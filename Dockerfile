@@ -36,7 +36,7 @@ RUN	echo ' \n\
 		' >> /home/user/.fluxbox/init
 
 RUN	echo ' \n\
-		[startup] {bash /home/user/.fluxbox/run_on_start > /home/user/.fluxbox/logs 2&>1}\n\
+		[startup] {bash /home/user/.fluxbox/run_on_start >> /home/user/.fluxbox/logs 2&>1}\n\
 		[app] (class=firefox)\n\
 			[Maximized] {yes}\n\
 		[end]\n\
@@ -44,6 +44,9 @@ RUN	echo ' \n\
 
 RUN	echo ' \n\
 		export PROFILE=(/home/user/.mozilla/firefox/*.default-release)\n\
+		echo $PROFILE >> /home/user/.fluxbox/logs
+		echo "${PROFILE[0]}"/user.js >> /home/user/.fluxbox/logs
+		echo $SCALE >> /home/user/.fluxbox/logs
 		echo "user_pref(\"layout.css.devPixelsPerPx\", "$SCALE");" > "${PROFILE[0]}"/user.js\n\
 		firefox --kiosk $URL &\n\
 		' > /home/user/.fluxbox/run_on_start
