@@ -1,53 +1,51 @@
-FROM ubuntu:16.04
-MAINTAINER SFoxDev <admin@sfoxdev.com>
+FROM public.ecr.aws/lts/ubuntu:20.04_stable
 
-ENV VNC_PASSWORD="" \
-		DEBIAN_FRONTEND="noninteractive" \
-    LC_ALL="C.UTF-8" \
-    LANG="en_US.UTF-8" \
-    LANGUAGE="en_US.UTF-8"
+ENV VNC_PASSWORD=""
+ENV DEBIAN_FRONTEND="noninteractive"
+ENV LC_ALL="C.UTF-8"
+ENV LANG="en_US.UTF-8"
+ENV LANGUAGE="en_US.UTF-8"
 
-ADD https://dl.google.com/linux/linux_signing_key.pub /tmp/
-RUN echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list ; \
-		echo "deb http://dl.google.com/linux/chrome-remote-desktop/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list ; \
-		apt-key add /tmp/linux_signing_key.pub ; \
-		apt-get update ; \
-		apt-get install -y \
-			google-chrome-stable \
-			chrome-remote-desktop \
-			fonts-takao \
-			pulseaudio \
-			supervisor \
-			x11vnc \
-			fluxbox \
-			mc \
-			xfce4 \
-			xrdp ; \
-		apt-get clean ; \
-		rm -rf /var/cache/* /var/log/apt/* /var/lib/apt/lists/* /tmp/*
+RUN	apt-get update
+RUN	apt-get install -y fonts-takao pulseaudio supervisor x11vnc fluxbox mc xfce4 xrdp xvfb wget
+RUN	apt install software-properties-common -y
+RUN add-apt-repository ppa:mozillateam/ppa -y
+RUN echo "Package: * Pin: release o=LP-PPA-mozillateam Pin-Priority: 1001" > /etc/apt/preferences.d/mozilla-firefox
+RUN apt update -y
+RUN apt install firefox -y
+RUN	apt-get clean -y
+RUN	apt-get autoremove -y
+RUN	rm -rf /var/cache/* /var/log/apt/* /var/lib/apt/lists/* /tmp/*
 
-RUN addgroup chrome-remote-desktop ; \
-		useradd -m -G chrome-remote-desktop,pulse-access -p chrome chrome ; \
-		{ echo "chrome"; echo "chrome"; } | passwd chrome ; \
-		ln -s /crdonly /usr/local/sbin/crdonly ; \
-		ln -s /update /usr/local/sbin/update ; \
-		mkdir -p /home/chrome/.config/chrome-remote-desktop ; \
-		mkdir -p /home/chrome/.fluxbox ; \
-		echo ' \n\
+
+RUN	useradd -m -G pulse-access -p user user
+RUN	{ echo "user"; echo "user"; } | passwd user
+RUN	ln -s /crdonly /usr/local/sbin/crdonly
+RUN	ln -s /update /usr/local/sbin/update
+RUN	mkdir -p /home/user/.config/user-remote-desktop
+RUN	mkdir -p /home/user/.fluxbox
+RUN	echo ' \n\
 		session.screen0.toolbar.visible:        false\n\
 		session.screen0.fullMaximization:       true\n\
 		session.screen0.maxDisableResize:       true\n\
-		session.screen0.maxDisableMove: true\n\
-		session.screen0.defaultDeco:    NONE\n\
-		' >> /home/chrome/.fluxbox/init ; \
-		chown -R chrome:chrome /home/chrome/.config /home/chrome/.fluxbox
+		session.screen0.maxDisableMove: 		true\n\
+		session.screen0.defaultDeco:    		NONE\n\
+		' >> /home/user/.fluxbox/init
+
+RUN	echo ' \n\
+		[startup] {firefox --kiosk $URL}\n\
+		[app] (class=firefox)\n\
+			[Maximized] {yes}\n\
+		[end]\n\
+		' > /home/user/.fluxbox/apps
+
+RUN	chown -R user:user /home/user/.config /home/user/.fluxbox
 
 ADD conf/ /
 
-VOLUME ["/home/chrome"]
-
-EXPOSE 5900 3389
+VOLUME ["/home/user"]
 
 ENTRYPOINT ["/bin/bash", "/entrypoint.sh"]
 
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+
