@@ -17,7 +17,8 @@ RUN apt install firefox -y
 RUN	apt-get clean -y
 RUN	apt-get autoremove -y
 RUN	rm -rf /var/cache/* /var/log/apt/* /var/lib/apt/lists/* /tmp/*
-
+RUN SNIPPET="export PROMPT_COMMAND='history -a' && export HISTFILE=/commandhistory/.bash_history" \
+    && echo "$SNIPPET" >> "/root/.bashrc"
 
 RUN	useradd -m -G pulse-access -p user user
 RUN	{ echo "user"; echo "user"; } | passwd user
