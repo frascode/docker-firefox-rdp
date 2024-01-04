@@ -10,6 +10,7 @@ ENV SCALE="1"
 
 RUN	apt-get update
 RUN	apt-get install -y fonts-takao pulseaudio supervisor x11vnc fluxbox mc xfce4 xrdp xvfb wget nano grep sudo
+RUN	apt-get install awesome awesome-extra
 RUN	apt install software-properties-common -y
 RUN add-apt-repository ppa:mozillateam/ppa -y
 RUN echo "Package: * Pin: release o=LP-PPA-mozillateam Pin-Priority: 1001" > /etc/apt/preferences.d/mozilla-firefox
@@ -18,55 +19,20 @@ RUN apt install firefox -y
 RUN	apt-get clean -y
 RUN	apt-get autoremove -y
 RUN	rm -rf /var/cache/* /var/log/apt/* /var/lib/apt/lists/* /tmp/*
-RUN SNIPPET="export PROMPT_COMMAND='history -a' && export HISTFILE=/root/.bash_history" \
-    && echo "$SNIPPET" >> "/root/.bashrc"
+RUN SNIPPET="export PROMPT_COMMAND='history -a' && export HISTFILE=/root/.bash_history" && echo "$SNIPPET" >> "/root/.bashrc"
 
 RUN	useradd -m -G pulse-access -p user user
 RUN	{ echo "user"; echo "user"; } | passwd user
-RUN	ln -s /crdonly /usr/local/sbin/crdonly
-RUN	ln -s /update /usr/local/sbin/update
-RUN	mkdir -p /home/user/.config/user-remote-desktop
-RUN	mkdir -p /home/user/.fluxbox
-RUN	echo ' \n\
-		session.screen0.toolbar.visible:        false\n\
-		session.screen0.fullMaximization:       true\n\
-		session.screen0.maxDisableResize:       true\n\
-		session.screen0.maxDisableMove: 		true\n\
-		session.screen0.defaultDeco:    		NONE\n\
-		' >> /home/user/.fluxbox/init
+RUN	mkdir -p /home/user/.config/awesome/
+RUN	cp /etc/xdg/awesome/rc.lua /home/user/.config/awesome/rc.lua
 
-RUN	echo ' \n\
-#		[startup] {bash /home/user/.fluxbox/run_on_start >> /home/user/.fluxbox/logs 2&>1}\n\
-		[app] (class=firefox)\n\
-			[Maximized] {yes}\n\
-		[end]\n\
-		' > /home/user/.fluxbox/apps
-
-#RUN	echo '#!/bin/bash \n\
-#export PROFILE=(/home/user/.mozilla/firefox/*.default-release)\n\
-#echo $PROFILE >> /home/user/.fluxbox/logs\n\
-#echo "${PROFILE[0]}"/user.js >> /home/user/.fluxbox/logs\n\
-#echo $SCALE >> /home/user/.fluxbox/logs\n\
-#echo "user_pref(\"layout.css.devPixelsPerPx\", "$SCALE");" > "${PROFILE[0]}"/user.js\n\
-#firefox --kiosk $URL &\n\
-#		' > /home/user/.fluxbox/run_on_start
-
-RUN	echo '#!/bin/bash \n\
-export PROFILE=(/home/user/.mozilla/firefox/*.default-release)\n\
-echo $PROFILE >> /home/user/.fluxbox/logs\n\
-echo "${PROFILE[0]}"/user.js >> /home/user/.fluxbox/logs\n\
-echo $SCALE >> /home/user/.fluxbox/logs\n\
-echo "user_pref(\"layout.css.devPixelsPerPx\", "$SCALE");" > "${PROFILE[0]}"/user.js\n\
-fluxbox &\n\
-fbpid=$!\n\
-sleep 5\n\
+RUN	echo '\n\
 firefox --kiosk $URL &\n\
-wait $fbpid\n\
 \n\
-		' > /home/user/.fluxbox/startup
+		' > /home/user/.config/awesome/rc.lua
 
 
-RUN	chown -R user:user /home/user/.config /home/user/.fluxbox
+RUN	chown -R user:user /home/user/.config
 ADD conf/ /
 ENTRYPOINT ["/bin/bash", "/entrypoint.sh"]
 
