@@ -44,9 +44,9 @@ RUN	echo ' \n\
 
 RUN	echo ' \n\
 		export PROFILE=(/home/user/.mozilla/firefox/*.default-release)\n\
-		echo $PROFILE >> /home/user/.fluxbox/logs
-		echo "${PROFILE[0]}"/user.js >> /home/user/.fluxbox/logs
-		echo $SCALE >> /home/user/.fluxbox/logs
+		echo $PROFILE >> /home/user/.fluxbox/logs\n\
+		echo "${PROFILE[0]}"/user.js >> /home/user/.fluxbox/logs\n\
+		echo $SCALE >> /home/user/.fluxbox/logs\n\
 		echo "user_pref(\"layout.css.devPixelsPerPx\", "$SCALE");" > "${PROFILE[0]}"/user.js\n\
 		firefox --kiosk $URL &\n\
 		' > /home/user/.fluxbox/run_on_start
