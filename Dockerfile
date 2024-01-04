@@ -18,7 +18,7 @@ RUN apt install firefox -y
 RUN	apt-get clean -y
 RUN	apt-get autoremove -y
 RUN	rm -rf /var/cache/* /var/log/apt/* /var/lib/apt/lists/* /tmp/*
-RUN SNIPPET="export PROMPT_COMMAND='history -a' && export HISTFILE=/commandhistory/.bash_history" \
+RUN SNIPPET="export PROMPT_COMMAND='history -a' && export HISTFILE=/root/.bash_history" \
     && echo "$SNIPPET" >> "/root/.bashrc"
 
 RUN	useradd -m -G pulse-access -p user user
@@ -36,7 +36,7 @@ RUN	echo ' \n\
 		' >> /home/user/.fluxbox/init
 
 RUN	echo ' \n\
-		[startup] {bash /home/user/.fluxbox/run_on_start}\n\
+		[startup] {bash /home/user/.fluxbox/run_on_start > /home/user/.fluxbox/logs 2&>1}\n\
 		[app] (class=firefox)\n\
 			[Maximized] {yes}\n\
 		[end]\n\
@@ -45,7 +45,7 @@ RUN	echo ' \n\
 RUN	echo ' \n\
 		export PROFILE=(/home/user/.mozilla/firefox/*.default-release)\n\
 		echo "user_pref(\"layout.css.devPixelsPerPx\", "$SCALE");" > "${PROFILE[0]}"/user.js\n\
-		firefox --kiosk $URL\n\
+		firefox --kiosk $URL &\n\
 		' > /home/user/.fluxbox/run_on_start
 
 RUN	chown -R user:user /home/user/.config /home/user/.fluxbox
