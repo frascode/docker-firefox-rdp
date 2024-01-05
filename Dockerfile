@@ -27,14 +27,35 @@ RUN	mkdir -p /home/user/.config/awesome/
 RUN	cp /etc/xdg/awesome/rc.lua /home/user/.config/awesome/rc.lua
 
 RUN	echo '\n\
-awful.util.spawn("firefox --kiosk $URL")\n\
+pcall(require, "luarocks.loader")\n\
+local gears = require("gears")\n\
+local awful = require("awful")\n\
+require("awful.autofocus")\n\
+local wibox = require("wibox")\n\
+local beautiful = require("beautiful")\n\
+local naughty = require("naughty")\n\
+local menubar = require("menubar")\n\
+local hotkeys_popup = require("awful.hotkeys_popup")\n\
+awful.util.spawn("/home/user/firefox_startup")\n\
+client.connect_signal("property::minimized", function(c) c.maximized = true end)\n\
+client.connect_signal("property::maximized", function(c) c.maximized = true end)\n\
 \n\
 		' > /home/user/.config/awesome/rc.lua
 
+RUN	echo '#!/bin/bash \n\
+DISPLAY=":1" firefox --kiosk $URL &\n\
+\n\
+		' > /home/user/firefox_startup
+RUN	chmox +x /home/user/firefox_startup
 
-RUN	chown -R user:user /home/user/.config
+RUN	echo "user_pref(\"layout.css.devPixelsPerPx\", "$SCALE");" > /home/user/firefox_userjs
+
+
+
+RUN	chown -R user:user /home/user/
 ADD conf/ /
 ENTRYPOINT ["/bin/bash", "/entrypoint.sh"]
 
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+
 
