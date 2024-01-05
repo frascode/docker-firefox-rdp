@@ -46,7 +46,7 @@ RUN	echo '#!/bin/bash \n\
 DISPLAY=":1" firefox --kiosk $URL &\n\
 \n\
 		' > /home/user/firefox_startup
-RUN	chmox +x /home/user/firefox_startup
+RUN	chmod +x /home/user/firefox_startup
 
 RUN	echo "user_pref(\"layout.css.devPixelsPerPx\", "$SCALE");" > /home/user/firefox_userjs
 
