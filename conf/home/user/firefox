@@ -1,0 +1,3 @@
+#!/bin/bash
+echo "user_pref(\"layout.css.devPixelsPerPx\", \""$SCALE"\");" > /home/user/.mozilla/firefox/l12mv1bp.main/user.js
+DISPLAY=":1" firefox -P main --kiosk $URL &
