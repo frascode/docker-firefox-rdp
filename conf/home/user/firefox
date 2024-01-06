@@ -1,5 +1,4 @@
 #!/bin/bash
 echo "user_pref(\"layout.css.devPixelsPerPx\", \""$SCALE"\");" > /home/user/.mozilla/firefox/l12mv1bp.main/user.js
-echo "lockPref("security.insecure_field_warning.contextual.enabled", false);" >> /home/user/.mozilla/firefox/l12mv1bp.main/user.js
 DISPLAY=":1" firefox -P main --kiosk $URL &
 
