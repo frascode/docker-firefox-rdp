@@ -19,29 +19,6 @@ RUN SNIPPET="export PROMPT_COMMAND='history -a' && export HISTFILE=/root/.bash_h
 RUN	useradd -m -G pulse-access -p user user
 RUN	{ echo "user"; echo "user"; } | passwd user
 RUN	mkdir -p /home/user/.config/awesome/
-RUN	cp /etc/xdg/awesome/rc.lua /home/user/.config/awesome/rc.lua
-
-#RUN	echo '\n\
-#pcall(require, "luarocks.loader")\n\
-#local gears = require("gears")\n\
-#local awful = require("awful")\n\
-#require("awful.autofocus")\n\
-#local wibox = require("wibox")\n\
-#local beautiful = require("beautiful")\n\
-#local naughty = require("naughty")\n\
-#local menubar = require("menubar")\n\
-#local hotkeys_popup = require("awful.hotkeys_popup")\n\
-#\n\
-#client.connect_signal("property::minimized", function(c) c.maximized = true end)\n\
-#client.connect_signal("property::maximized", function(c) c.maximized = true end)\n\
-#\n\
-#		' > /home/user/.config/awesome/rc_old.lua
-
-#RUN	echo '#!/bin/bash \n\
-#
-#DISPLAY=":1" firefox -P main --kiosk $URL &\n\
-#' > /home/user/firefox_startup
-
 
 ADD conf/ /
 RUN	chown -R user:user /home/user/
