@@ -1,6 +1,6 @@
 FROM public.ecr.aws/lts/ubuntu:20.04_stable
 
-ENV VNC_PASSWORD=""
+
 ENV DEBIAN_FRONTEND="noninteractive"
 ENV LC_ALL="C.UTF-8"
 ENV LANG="en_US.UTF-8"
@@ -11,7 +11,7 @@ ENV KIOSK_MODE="true"
 ENV START_URL="about:blank"
 
 RUN	apt-get update
-RUN	apt-get install -y fonts-takao pulseaudio supervisor xrdp xvfb wget nano grep sudo
+RUN	apt-get install -y fonts-takao pulseaudio supervisor x11vnc fluxbox mc xfce4 xrdp xvfb wget nano grep sudo
 RUN	apt-get install awesome awesome-extra -y
 RUN apt-get install firefox -y
 RUN	apt-get clean -y && apt-get autoremove -y
@@ -27,6 +27,6 @@ RUN	chown -R user:user /home/user/
 
 ENTRYPOINT ["/bin/bash", "/entrypoint.sh"]
 
+EXPOSE 3389
+
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
-
-
