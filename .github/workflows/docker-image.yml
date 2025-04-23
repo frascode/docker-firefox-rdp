@@ -27,4 +27,4 @@ jobs:
       with:
         context: .
         push: true
-        tags: vvzvlad/docker-firefox-rdp:latest
+        tags: frascos/docker-firefox-rdp:latest
