@@ -1,4 +1,14 @@
 #!/bin/bash
-echo "user_pref(\"layout.css.devPixelsPerPx\", \""$SCALE"\");" > /home/user/.mozilla/firefox/l12mv1bp.main/user.js
-DISPLAY=":1" firefox -P main --kiosk $URL &
 
+# HiDPI configuration
+echo "user_pref(\"layout.css.devPixelsPerPx\", \""$SCALE"\");" > /home/user/.mozilla/firefox/l12mv1bp.main/user.js
+
+# Check id KIOSK is enabled
+if [ "$KIOSK_MODE" = "true" ]; then
+    KIOSK_FLAG="--kiosk"
+else
+    KIOSK_FLAG=""
+fi
+
+# Start firefox
+DISPLAY=":1" firefox -P main $KIOSK_FLAG $START_URL &
