@@ -1,9 +1,20 @@
 #!/bin/bash
 
-# HiDPI configuration
-echo "user_pref(\"layout.css.devPixelsPerPx\", \""$SCALE"\");" > /home/user/.mozilla/firefox/l12mv1bp.main/user.js
+# Set firefox configuration
+cat > /home/user/.mozilla/firefox/l12mv1bp.main/user.js << EOL
+user_pref("layout.css.devPixelsPerPx", "${SCALE}");
+// Disable recovery last session
+user_pref("browser.sessionstore.resume_from_crash", false);
+user_pref("browser.sessionstore.resume_session_once", false);
+user_pref("browser.sessionstore.resuming_after_os_restart", false);
+user_pref("browser.sessionstore.max_resumed_crashes", 0);
+user_pref("browser.sessionstore.max_tabs_undo", 0);
+// Set default page
+user_pref("browser.startup.homepage", "${START_URL}");
+user_pref("browser.startup.page", 1);
+EOL
 
-# Check id KIOSK is enabled
+# Check if KIOSK is enabled by the user
 if [ "$KIOSK_MODE" = "true" ]; then
     KIOSK_FLAG="--kiosk"
 else
@@ -11,4 +22,4 @@ else
 fi
 
 # Start firefox
-DISPLAY=":1" firefox -P main $KIOSK_FLAG $START_URL &
+DISPLAY=":1" firefox -P main $KIOSK_FLAG --no-remote --new-instance $START_URL &
